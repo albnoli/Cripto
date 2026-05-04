@@ -3,177 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tracker Dashboard</title>
+    <title>My Crypto Tracker</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #0f172a;
-            --bg: #f8fafc;
-            --text: #1e293b;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; /* Permite que la página crezca hacia abajo */
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1, h2 { text-align: center; color: var(--primary); margin-top: 0; }
-        h2 { font-size: 1.2rem; color: var(--secondary); margin-bottom: 1rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.95rem; }
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { opacity: 0.9; }
-        .btn-secondary { background-color: var(--secondary); margin-top: 10px; }
-        #status { margin-top: 1rem; text-align: center; font-size: 0.9rem; font-weight: bold; }
-        hr { margin: 2rem 0; border: 0; border-top: 2px solid #e2e8f0; }
-        .resumen-box { background:#f1f5f9; padding:15px; border-radius:8px; margin-top:15px; font-size: 0.95rem; border-left: 4px solid var(--primary); }
-        .resumen-box h3 { margin-top:0; color:var(--primary); font-size: 1.1rem; }
-        .lista-compras { padding-left: 20px; margin-top:5px; font-size: 0.85rem; color: #475569; }
+        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f1f5f9; }
+        body { font-family: sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h1, h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        h2 { font-size: 1.2rem; color: var(--dark); margin-top: 0; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-add { background: var(--primary); margin-bottom: 10px; }
+        .btn-search { background: var(--dark); }
+        #status { text-align: center; margin-top: 10px; font-weight: bold; font-size: 0.85rem; }
+        hr { margin: 30px 0; border: none; border-top: 1px solid #ddd; }
+        .result-card { background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-top: 15px; }
+        .historial { font-size: 0.8rem; color: #64748b; margin-top: 10px; padding-left: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <h1>Crypto Tracker</h1>
-    
-    <div class="form-group">
-        <label for="moneda">Moneda (Ticker)</label>
-        <input type="text" id="moneda" placeholder="Ej: BTC, ETH, XRP" required>
+
+    <div class="input-group">
+        <label>Moneda (Ticker)</label>
+        <input type="text" id="coin" placeholder="Ej: BTC, XRP, HBAR">
     </div>
-    <div class="form-group">
-        <label for="precio">Precio de compra</label>
-        <input type="text" id="precio" placeholder="Ej: 60000.50" required>
+    <div class="input-group">
+        <label>Precio de compra</label>
+        <input type="text" id="price" placeholder="Ej: 0.55 o 20000">
     </div>
-    <div class="form-group">
-        <label for="cantidad">Cantidad comprada</label>
-        <input type="text" id="cantidad" placeholder="Ej: 0.001" required>
+    <div class="input-group">
+        <label>Cantidad comprada</label>
+        <input type="text" id="qty" placeholder="Ej: 0.004987">
     </div>
-    <button onclick="enviarDatos()">Registrar Compra</button>
+    <button class="btn-add" onclick="saveData()">Registrar Compra</button>
     <div id="status"></div>
 
     <hr>
 
-    <h2>Consultar Moneda</h2>
-    <div class="form-group">
-        <label for="monedaConsulta">Buscar activo en mi Excel</label>
-        <input type="text" id="monedaConsulta" placeholder="Escribe el Ticker (ej: BTC)">
+    <h2>Consultar Cartera</h2>
+    <div class="input-group">
+        <input type="text" id="searchCoin" placeholder="Ticker a buscar...">
     </div>
-    <button class="btn-secondary" onclick="consultarDatos()">Ver resumen y media</button>
-    <div id="resultadoConsulta"></div>
+    <button class="btn-search" onclick="getData()">Ver Resumen</button>
+    <div id="displayArea"></div>
 </div>
 
 <script>
-    // ⚠️ CAMBIA ESTO POR TU URL DE GOOGLE APPS SCRIPT ⚠️
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzMIxFUlhehEwqwVIz8oQugy_RA2hYbrgGCu7RfGcCYc25W_yltNLzWXbHUJxs5q7M/exec";
+    // ⚠️ SUSTITUYE ESTA URL POR LA TUYA DE GOOGLE SCRIPTS ⚠️
+    const URL_APP = "https://script.google.com/macros/s/AKfycbzMIxFUlhehEwqwVIz8oQugy_RA2hYbrgGCu7RfGcCYc25W_yltNLzWXbHUJxs5q7M/exec";
 
-    async function enviarDatos() {
-        const moneda = document.getElementById('moneda').value.toUpperCase();
-        let precio = document.getElementById('precio').value;
-        let cantidad = document.getElementById('cantidad').value;
+    async function saveData() {
+        const coin = document.getElementById('coin').value.toUpperCase();
+        let price = document.getElementById('price').value.replace(',', '.');
+        let qty = document.getElementById('qty').value.replace(',', '.');
         const status = document.getElementById('status');
 
-        if(!moneda || !precio || !cantidad) {
-            status.innerText = "⚠️ Rellena todos los campos.";
-            return;
-        }
+        if(!coin || !price || !qty) { status.innerText = "❌ Rellena todo"; return; }
 
-        precio = precio.replace(',', '.');
-        cantidad = cantidad.replace(',', '.');
-        status.style.color = "#000";
+        status.style.color = "blue";
         status.innerText = "⏳ Guardando...";
 
-        const datos = {
-            moneda: moneda,
-            precio: precio,
-            cantidad: cantidad,
-            fecha: new Date().toLocaleString()
-        };
+        const payload = { moneda: coin, precio: price, cantidad: qty, fecha: new Date().toLocaleString() };
 
         try {
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datos)
-            });
+            await fetch(URL_APP, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             status.style.color = "green";
-            status.innerText = "✅ ¡Guardado en el Excel!";
-            document.getElementById('moneda').value = "";
-            document.getElementById('precio').value = "";
-            document.getElementById('cantidad').value = "";
-        } catch (error) {
-            status.style.color = "red";
-            status.innerText = "❌ Error de conexión.";
-        }
+            status.innerText = "✅ ¡Guardado!";
+            document.getElementById('price').value = "";
+            document.getElementById('qty').value = "";
+        } catch (e) { status.innerText = "❌ Error"; }
     }
 
-    async function consultarDatos() {
-        const moneda = document.getElementById('monedaConsulta').value.toUpperCase();
-        const resDiv = document.getElementById('resultadoConsulta');
-        
-        if(!moneda) {
-            resDiv.innerHTML = "<div style='color:red; margin-top:10px; text-align:center;'>⚠️ Escribe un Ticker.</div>";
-            return;
-        }
+    async function getData() {
+        const coin = document.getElementById('searchCoin').value.toUpperCase();
+        const area = document.getElementById('displayArea');
+        if(!coin) return;
 
-        resDiv.innerHTML = "<div style='margin-top:10px; text-align:center;'>⏳ Consultando Excel...</div>";
+        area.innerHTML = "<p style='text-align:center'>⏳ Consultando...</p>";
 
         try {
-            const response = await fetch(WEB_APP_URL + "?moneda=" + moneda);
-            const data = await response.json();
-            
-            if (!data.compras || data.compras.length === 0) {
-                resDiv.innerHTML = `<div style='color:#ea580c; margin-top:10px; text-align:center;'>No se encontraron compras de ${moneda}.</div>`;
-                return;
-            }
-            
-            let html = `<div class="resumen-box">`;
-            html += `<h3>Resultados de ${moneda}</h3>`;
-            html += `<p><strong>Precio Medio:</strong> ${data.precioMedio.toFixed(4)}</p>`;
-            html += `<p><strong>Total Monedas:</strong> ${data.cantidadTotal}</p>`;
-            html += `<p><strong>Inversión Total:</strong> ${data.invertidoTotal.toFixed(2)}</p>`;
-            html += `<h4 style="margin-bottom:5px;">Historial:</h4><ul class="lista-compras">`;
-            data.compras.forEach(c => {
-                html += `<li>${c.cantidad} a ${c.precio} (${new Date(c.fecha).toLocaleDateString()})</li>`;
+            const res = await fetch(URL_APP + "?moneda=" + coin);
+            const d = await res.json();
+
+            if(d.compras.length === 0) { area.innerHTML = "❌ Sin datos"; return; }
+
+            let html = `<div class="result-card">
+                <strong>${d.moneda}</strong><br>
+                Precio Medio: ${d.precioMedio.toFixed(6)}<br>
+                Total: ${d.cantidadTotal}<br>
+                Invertido: ${d.invertidoTotal.toFixed(2)}€
+                <ul class="historial">`;
+            d.compras.forEach(c => {
+                html += `<li>${new Date(c.fecha).toLocaleDateString()}: ${c.cantidad} a ${c.precio}</li>`;
             });
             html += `</ul></div>`;
-            resDiv.innerHTML = html;
-        } catch (error) {
-            resDiv.innerHTML = "<div style='color:red; margin-top:10px; text-align:center;'>❌ Error. ¿Has actualizado la WebApp en Sheets?</div>";
-        }
+            area.innerHTML = html;
+        } catch (e) { area.innerHTML = "❌ Error al conectar"; }
     }
 </script>
 
